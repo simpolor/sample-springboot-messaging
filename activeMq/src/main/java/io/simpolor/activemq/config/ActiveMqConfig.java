@@ -1,43 +1,38 @@
 package io.simpolor.activemq.config;
 
-import io.simpolor.activemq.model.MessageDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
-import org.springframework.jms.support.converter.MessageConverter;
-import org.springframework.jms.support.converter.MessageType;
 
 import javax.jms.Queue;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
 public class ActiveMqConfig {
 
-    @Value("${activemq.queue.name}")
-    private String queueName;
+    @Value("${spring.activemq.broker-url}")
+    private String brokerUrl;
 
-    // spring.activeMq prefix 의 설정값을 가지는 클래스
-    private final ActiveMQProperties activeMQProperties;
+    @Value("${spring.activemq.user}")
+    private String user;
+
+    @Value("${spring.activemq.password}")
+    private String password;
+
+    private static final String QUEUE_NAME = "student";
 
     /**
      * 지정된 queue 이름으로 Queue 빈을 생성
      **/
     @Bean
     public Queue queue() {
-        System.out.println(activeMQProperties.getBrokerUrl());
-        System.out.println(activeMQProperties.getUser());
-        System.out.println(activeMQProperties.getPassword());
-        return new ActiveMQQueue(queueName);
+        return new ActiveMQQueue(QUEUE_NAME);
     }
 
     /**
@@ -48,9 +43,9 @@ public class ActiveMqConfig {
     @Bean
     public ActiveMQConnectionFactory activeMQConnectionFactory() {
         ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
-        activeMQConnectionFactory.setBrokerURL(activeMQProperties.getBrokerUrl());
-        activeMQConnectionFactory.setUserName(activeMQProperties.getUser());
-        activeMQConnectionFactory.setPassword(activeMQProperties.getPassword());
+        activeMQConnectionFactory.setBrokerURL(brokerUrl);
+        activeMQConnectionFactory.setUserName(user);
+        activeMQConnectionFactory.setPassword(password);
         return activeMQConnectionFactory;
     }
 
@@ -60,7 +55,8 @@ public class ActiveMqConfig {
     @Bean
     public JmsTemplate jmsTemplate() {
         JmsTemplate jmsTemplate = new JmsTemplate(activeMQConnectionFactory());
-        jmsTemplate.setMessageConverter(jacksonJmsMessageConverter());
+        ///jmsTemplate.setMessageConverter(jacksonJmsMessageConverter());
+        jmsTemplate.setDefaultDestination(queue());
         jmsTemplate.setExplicitQosEnabled(true);    // 메시지 전송 시 QOS을 설정
         jmsTemplate.setDeliveryPersistent(false);   // 메시지의 영속성을 설정
         jmsTemplate.setReceiveTimeout(1000 * 3);    // 메시지를 수신하는 동안의 대기 시간을 설정(3초)
@@ -75,10 +71,11 @@ public class ActiveMqConfig {
     public JmsListenerContainerFactory<?> jmsListenerContainerFactory() {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(activeMQConnectionFactory());
-        factory.setMessageConverter(jacksonJmsMessageConverter());
+        //factory.setMessageConverter(jacksonJmsMessageConverter());
         return factory;
     }
-    @Bean
+
+    /*@Bean
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
@@ -89,5 +86,5 @@ public class ActiveMqConfig {
         converter.setTypeIdMappings(typeIdMappings);
 
         return converter;
-    }
+    }*/
 }

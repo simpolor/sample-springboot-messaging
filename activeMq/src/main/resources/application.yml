@@ -3,10 +3,6 @@ server:
 
 spring:
   activemq:
-    broker-url: tcp://localhost:61616 // ActiveMQ 메세지 브로커 서버 포트
-    user: admin // ActiveMQ 웹 관리 콘솔 아이디
-    password: 1234 // ActiveMQ 웹 관리 콘솔 비밀번호
-
-activemq:
-  queue:
-    name: student // 사용할 Queue 이름
+    broker-url: tcp://localhost:61616 # ActiveMQ 메세지 브로커 서버 포트
+    user: admin # ActiveMQ 웹 관리 콘솔 아이디
+    password: admin # ActiveMQ 웹 관리 콘솔 비밀번호

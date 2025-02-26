@@ -1,10 +1,10 @@
-package io.simpolor.activemq.controller;
+package io.simpolor.rabbitmq.controller;
 
-import io.simpolor.activemq.message.MessageProducer;
-import io.simpolor.activemq.model.ResultDto;
-import io.simpolor.activemq.model.StudentDto;
-import io.simpolor.activemq.repository.entity.Student;
-import io.simpolor.activemq.service.StudentService;
+import io.simpolor.rabbitmq.message.MessageProducer;
+import io.simpolor.rabbitmq.model.ResultDto;
+import io.simpolor.rabbitmq.model.StudentDto;
+import io.simpolor.rabbitmq.repository.entity.Student;
+import io.simpolor.rabbitmq.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
